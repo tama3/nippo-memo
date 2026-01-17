@@ -11,6 +11,14 @@ export const calculateDuration = (startTime: string, endTime: string): number =>
     return timeToMinutes(endTime) - timeToMinutes(startTime);
 };
 
+// 分を「時間分」形式に変換
+export const formatMinutes = (totalMinutes: number): string => {
+    const hours = Math.floor(totalMinutes / 60);
+    const minutes = totalMinutes % 60;
+    if (hours === 0) return `${minutes}分`;
+    return `${hours}時間${minutes}分`;
+};
+
 // 2つの時間範囲が重複しているかどうかをチェック
 export const isTimeOverlapping = (
     start1: string, end1: string,
@@ -94,7 +102,10 @@ export const generateReportText = (groups: TaskGroup[]): string => {
 
     return groups.map((group) => {
         const quantityPart = group.totalQuantity > 0 ? `数量: ${group.totalQuantity}\n` : '';
-        const header = `【${group.name}】\n${quantityPart}所要時間: ${group.totalDuration}分`;
+        const durationText = group.totalDuration >= 60
+            ? `${group.totalDuration}分 (${formatMinutes(group.totalDuration)})`
+            : `${group.totalDuration}分`;
+        const header = `【${group.name}】\n${quantityPart}所要時間: ${durationText}`;
         // const timeLines = group.timeRanges
         //     .map(({ startTime, endTime }) => `　${startTime} ～ ${endTime}`)
         //     .join('\n');
