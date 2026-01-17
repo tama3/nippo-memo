@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React, { useState, useMemo } from 'react';
 import { Trash2, Pencil, ChevronDown, ChevronRight } from 'lucide-react';
 import type { Task } from '../types';
 
@@ -12,6 +12,16 @@ interface TaskListProps {
 export const TaskList: React.FC<TaskListProps> = ({ tasks, onDelete, onEdit, disableEdit = false }) => {
     // デフォルトは閉じた状態
     const [isOpen, setIsOpen] = useState(false);
+
+    // 開始時間順にソート（時間未入力のものは末尾に）
+    const sortedTasks = useMemo(() => {
+        return [...tasks].sort((a, b) => {
+            if (!a.startTime && !b.startTime) return 0;
+            if (!a.startTime) return 1;
+            if (!b.startTime) return -1;
+            return a.startTime.localeCompare(b.startTime);
+        });
+    }, [tasks]);
 
     if (tasks.length === 0) {
         return null; // リストが空の場合は折り畳みも表示しない
@@ -29,7 +39,7 @@ export const TaskList: React.FC<TaskListProps> = ({ tasks, onDelete, onEdit, dis
 
             {isOpen && (
                 <ul className="space-y-2">
-                    {tasks.map((task) => (
+                    {sortedTasks.map((task) => (
                         <li key={task.id} className="bg-white border rounded-lg p-3 shadow-sm flex justify-between items-center group">
                             <div className="flex-1">
                                 <div className="flex justify-between items-baseline mb-1">
