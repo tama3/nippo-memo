@@ -41,12 +41,10 @@ export const InputForm: React.FC<InputFormProps> = ({ input, onChange, onAdd, ta
         <section className="p-4 bg-gray-50 border-b">
             <h2 className="text-sm font-bold text-gray-500 mb-2 uppercase tracking-wide">新しい作業</h2>
             <form onSubmit={handleSubmit} className="space-y-3">
-                {displayError && <p className="text-red-500 text-sm font-medium">{displayError}</p>}
-
                 <div>
                     <input
                         type="text"
-                        placeholder="作業名 (例: 封入作業)"
+                        placeholder="作業名"
                         className="w-full p-2 border rounded-md focus:ring-2 focus:ring-blue-500 outline-none"
                         value={input.name}
                         onChange={(e) => onChange({ ...input, name: e.target.value })}
@@ -86,6 +84,8 @@ export const InputForm: React.FC<InputFormProps> = ({ input, onChange, onAdd, ta
                         aria-label="終了時間"
                     />
                 </div>
+
+                {displayError && <p className="text-red-500 text-sm font-medium">{displayError}</p>}
 
                 <button
                     type="submit"
