@@ -29,6 +29,11 @@ export const InputForm: React.FC<InputFormProps> = ({ input, onChange, onAdd, ta
             setError('数量は0以上の数値を入力してください');
             return;
         }
+        // 終了時間が開始時間より前の場合はエラー
+        if (input.startTime && input.endTime && input.endTime <= input.startTime) {
+            setError('終了時間は開始時間より後にしてください');
+            return;
+        }
 
         setError('');
         onAdd(input);
