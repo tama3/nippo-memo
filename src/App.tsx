@@ -6,6 +6,7 @@ import { TaskList } from './components/TaskList';
 import { ReportView } from './components/ReportView';
 import { MemoArea } from './components/MemoArea';
 import { useAppState } from './hooks/useAppState';
+import { findOverlappingTask } from './utils/aggregation';
 import type { Task } from './types';
 
 function App() {
@@ -17,6 +18,7 @@ function App() {
     startTime: '',
     endTime: '',
   });
+  const [timeError, setTimeError] = useState<string>('');
 
   // Dirty check: if any field has value, editing is disabled to prevent overwrite
   const isFormDirty = formInput.name !== '' || formInput.quantity !== '' || formInput.startTime !== '' || formInput.endTime !== '';
@@ -34,6 +36,15 @@ function App() {
   };
 
   const handleAdd = (task: TaskInput) => {
+    // 時間の重複チェック
+    if (task.startTime && task.endTime) {
+      const overlapping = findOverlappingTask(tasks, task.startTime, task.endTime);
+      if (overlapping) {
+        setTimeError(`時間帯が「${overlapping.name}」(${overlapping.startTime}～${overlapping.endTime})と重複しています`);
+        return;
+      }
+    }
+    setTimeError('');
     addTask(task);
     // Reset form after adding
     setFormInput({
@@ -56,6 +67,7 @@ function App() {
           onChange={setFormInput}
           onAdd={handleAdd}
           taskNameSuggestions={taskNameSuggestions}
+          externalError={timeError}
         />
         <TaskList
           tasks={tasks}

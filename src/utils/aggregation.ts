@@ -11,6 +11,33 @@ export const calculateDuration = (startTime: string, endTime: string): number =>
     return timeToMinutes(endTime) - timeToMinutes(startTime);
 };
 
+// 2つの時間範囲が重複しているかどうかをチェック
+export const isTimeOverlapping = (
+    start1: string, end1: string,
+    start2: string, end2: string
+): boolean => {
+    const s1 = timeToMinutes(start1);
+    const e1 = timeToMinutes(end1);
+    const s2 = timeToMinutes(start2);
+    const e2 = timeToMinutes(end2);
+    // 重複の条件: 一方の開始が他方の終了より前 かつ 一方の終了が他方の開始より後
+    return s1 < e2 && e1 > s2;
+};
+
+// 新しいタスクが既存のタスクと時間が重複しているかチェック
+export const findOverlappingTask = (
+    tasks: Task[],
+    newStartTime: string,
+    newEndTime: string
+): Task | undefined => {
+    if (!newStartTime || !newEndTime) return undefined;
+
+    return tasks.find(task => {
+        if (!task.startTime || !task.endTime) return false;
+        return isTimeOverlapping(newStartTime, newEndTime, task.startTime, task.endTime);
+    });
+};
+
 // タスクをグループ化して集計
 export interface TaskGroup {
     name: string;

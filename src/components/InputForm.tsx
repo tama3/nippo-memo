@@ -13,9 +13,10 @@ interface InputFormProps {
     onChange: (input: TaskInput) => void;
     onAdd: (task: TaskInput) => void;
     taskNameSuggestions: string[];
+    externalError?: string;
 }
 
-export const InputForm: React.FC<InputFormProps> = ({ input, onChange, onAdd, taskNameSuggestions }) => {
+export const InputForm: React.FC<InputFormProps> = ({ input, onChange, onAdd, taskNameSuggestions, externalError }) => {
     const [error, setError] = useState<string>('');
 
     const handleSubmit = (e: React.FormEvent) => {
@@ -33,11 +34,14 @@ export const InputForm: React.FC<InputFormProps> = ({ input, onChange, onAdd, ta
         onAdd(input);
     };
 
+    // どちらかのエラーを表示
+    const displayError = error || externalError;
+
     return (
         <section className="p-4 bg-gray-50 border-b">
             <h2 className="text-sm font-bold text-gray-500 mb-2 uppercase tracking-wide">新しい作業</h2>
             <form onSubmit={handleSubmit} className="space-y-3">
-                {error && <p className="text-red-500 text-sm font-medium">{error}</p>}
+                {displayError && <p className="text-red-500 text-sm font-medium">{displayError}</p>}
 
                 <div>
                     <input
