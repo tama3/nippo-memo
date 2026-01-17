@@ -44,6 +44,7 @@ export interface TaskGroup {
     totalQuantity: number;
     totalDuration: number; // 分単位
     timeRanges: { startTime: string; endTime: string }[];
+    firstStartTime: string; // ソート用
 }
 
 export const aggregateTasks = (tasks: Task[]): TaskGroup[] => {
@@ -63,6 +64,10 @@ export const aggregateTasks = (tasks: Task[]): TaskGroup[] => {
                     startTime: task.startTime,
                     endTime: task.endTime,
                 });
+                // より早い開始時間があれば更新
+                if (task.startTime < existing.firstStartTime) {
+                    existing.firstStartTime = task.startTime;
+                }
             }
         } else {
             grouped.set(task.name, {
@@ -70,11 +75,15 @@ export const aggregateTasks = (tasks: Task[]): TaskGroup[] => {
                 totalQuantity: task.quantity,
                 totalDuration: duration,
                 timeRanges: hasValidTime ? [{ startTime: task.startTime, endTime: task.endTime }] : [],
+                firstStartTime: task.startTime || '99:99', // 未入力は末尾に
             });
         }
     }
 
-    return Array.from(grouped.values());
+    // 開始時間順にソート
+    return Array.from(grouped.values()).sort((a, b) =>
+        a.firstStartTime.localeCompare(b.firstStartTime)
+    );
 };
 
 // 日報フォーマット用テキスト生成
