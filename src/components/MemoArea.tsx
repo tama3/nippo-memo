@@ -11,7 +11,7 @@ export const MemoArea: React.FC<MemoAreaProps> = ({ memo, onMemoChange }) => {
             <h2 className="text-sm font-bold text-gray-500 mb-2 uppercase tracking-wide">本日の感想</h2>
             <textarea
                 className="w-full p-3 border rounded-md min-h-[100px] focus:ring-2 focus:ring-blue-500 outline-none resize-y text-sm"
-                placeholder="気づきや連絡事項など..."
+                placeholder="本日の感想を入力"
                 value={memo}
                 onChange={(e) => onMemoChange(e.target.value)}
             />
